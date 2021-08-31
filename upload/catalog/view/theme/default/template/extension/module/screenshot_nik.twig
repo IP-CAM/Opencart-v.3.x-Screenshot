@@ -1,36 +1,17 @@
 <script>
   $(document).ready(function () {
       setInterval(function () {
-          // html2canvas($("body"), {
-          //     onrendered: function(canvas) {
-          //         theCanvas = canvas;
-          //
-          //
-          //         canvas.toBlob(function(blob) {
-          //             console.log(blob)
-          //             // saveAs(blob, "Dashboard.png");
-          //         });
-          //     }
-          // });
           html2canvas($('body')[0]).then((canvas) => {
-              console.log("done..")
-              canvas.toBlob(function(blob) {
-                  console.log(blob)
+              var imgData = canvas.toDataURL('image/png');
 
-                  var imgData = canvas.toDataURL('image/png');
+              var output = encodeURIComponent(imgData);
 
-                  var output = encodeURIComponent(imgData);
+              var Parameters = "image=" + output + "&layout_name=" + '{{ layout_name }}';
 
-                  var cur_path = 'categories'
-
-                  var Parameters = "image=" + output + "&filedir=" + cur_path;
-
-                  $.ajax({
-                      url: 'index.php?route=extension/module/screenshot_nik/saveScreenshot',
-                      type: "POST",
-                      data: Parameters
-                  });
-                  // saveAs(blob, "Dashboard.png");
+              $.ajax({
+                  url: 'index.php?route=extension/module/screenshot_nik/saveScreenshot',
+                  type: "POST",
+                  data: Parameters
               });
           })
       }, {{ frequency }})
