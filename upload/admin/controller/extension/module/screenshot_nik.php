@@ -33,6 +33,18 @@ class ControllerExtensionModuleScreenshotNik extends Controller {
 			$data['error_name'] = '';
 		}
 
+		if (isset($this->error['frequency_save_screenshot'])) {
+			$data['error_frequency_save_screenshot'] = $this->error['frequency_save_screenshot'];
+		} else {
+			$data['error_frequency_save_screenshot'] = '';
+		}
+
+		if (isset($this->error['date_clear_folder'])) {
+			$data['error_date_clear_folder'] = $this->error['date_clear_folder'];
+		} else {
+			$data['error_date_clear_folder'] = '';
+		}
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -167,10 +179,12 @@ class ControllerExtensionModuleScreenshotNik extends Controller {
 
         $modules = $this->model_setting_module->getModulesByCode('screenshot_nik');
 
+        date_default_timezone_set('Europe/Moscow');
+
         foreach ($modules as $module) {
             $settings = json_decode($module['setting'], true);
 
-            if($settings['date_clear_folder'] == date("Y-m-d")) {
+            if($settings['date_clear_folder'] == date('j')) {
                 $dir = DIR_IMAGE . "screenshot_users/" . $settings['layout_name'];
 
                 $this->deleteDirectory($dir);
@@ -213,6 +227,16 @@ class ControllerExtensionModuleScreenshotNik extends Controller {
 		if ((utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 64)) {
 			$this->error['name'] = $this->language->get('error_name');
 		}
+
+		if ((utf8_strlen($this->request->post['frequency_save_screenshot']) < 1)) {
+			$this->error['frequency_save_screenshot'] = $this->language->get('error_frequency_save_screenshot');
+		}
+
+        if (!empty($this->request->post['date_clear_folder'])) {
+            if ((int)$this->request->post['date_clear_folder'] < 1 || (int)$this->request->post['date_clear_folder'] > 31) {
+                $this->error['date_clear_folder'] = $this->language->get('error_date_clear_folder');
+            }
+        }
 
 		return !$this->error;
 	}
